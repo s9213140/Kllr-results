@@ -1,0 +1,63 @@
+name: KLLR Daily Result JSON
+
+on:
+  # Runs automatically every day (time is in UTC, this is around 3:45–4:00 PM IST)
+  schedule:
+    - cron: "15 10 * * *"
+  # Lets you run it manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate demo lottery JSON for today
+        run: |
+          mkdir -p data
+          python - << 'EOF'
+          import json, datetime, os
+
+          # Get current IST time
+          ist = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
+          date_key = ist.strftime('%Y-%m-%d')
+
+          data = {
+              "date": date_key,
+              "firstPrize": {
+                  "fullNumbers": ["BN 107880"],
+                  "consFull": ["BO 107880","BP 107880"],
+                  "last4": "7880"
+              },
+              "prizesLast4": {
+                  "3269": { "prize": "2nd", "amount": "₹30,00,000" },
+                  "6509": { "prize": "3rd", "amount": "₹5,00,000" },
+                  "0144": { "prize": "small", "amount": "₹100" },
+                  "0159": { "prize": "small", "amount": "₹200" },
+                  "0097": { "prize": "small", "amount": "₹500" }
+              }
+          }
+
+          os.makedirs("data", exist_ok=True)
+          out_path = os.path.join("data", f"{date_key}.json")
+          with open(out_path, "w", encoding="utf-8") as f:
+              json.dump(data, f, ensure_ascii=False, indent=2)
+
+          print("Wrote", out_path)
+          EOF
+
+      - name: Commit and push JSON
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update daily lottery JSON"
+          commit_user_name: "kllr-bot"
+          commit_user_email: "kllr-bot@example.com"
+          file_pattern: data/*.json
