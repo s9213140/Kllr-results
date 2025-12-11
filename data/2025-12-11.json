@@ -1,0 +1,15 @@
+{
+  "date": "2025-12-11",
+  "firstPrize": {
+    "fullNumbers": ["BN 107880"],
+    "consFull": ["BO 107880","BP 107880"],
+    "last4": "7880"
+  },
+  "prizesLast4": {
+    "3269": { "prize": "2nd", "amount": "₹30,00,000" },
+    "6509": { "prize": "3rd", "amount": "₹5,00,000" },
+    "0144": { "prize": "small", "amount": "₹100" },
+    "0159": { "prize": "small", "amount": "₹200" },
+    "0097": { "prize": "small", "amount": "₹500" }
+  }
+}
